@@ -1,6 +1,4 @@
-好的，这是一个适用于你这个项目的 README 文件示例，你可以根据需要进行修改和补充。
 
-```markdown
 # Markdown 到 HTML 转换器脚本 (Markdown to HTML Converter Script)
 
 这是一个简单的 Node.js 命令行脚本，用于将 Markdown 文件或包含 Markdown 文件的整个目录转换为独立的 HTML 文件。它使用 [Showdown](https://github.com/showdownjs/showdown) 进行 Markdown 解析，并集成 [Highlight.js](https://highlightjs.org/) 实现代码块的语法高亮。
@@ -113,5 +111,3 @@ node convert.js -i <输入文件或目录> [-o <输出目录>] [其他选项...]
 ## 📄 许可证
 
 本项目采用 MIT 许可证。详情请参阅 `LICENSE` 文件（如果未来添加）。
-
-```
