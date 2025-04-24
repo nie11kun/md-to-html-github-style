@@ -1,6 +1,10 @@
+/* Base body styles */
 body {
-    font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /* Consolidated font stack */
+    font: 400 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    /* Base text color for the page */
     color: #111;
+    /* Page background color */
     background-color: #fbfbfb;
     -webkit-text-size-adjust: 100%;
     -webkit-font-feature-settings: "kern" 1;
@@ -11,56 +15,62 @@ body {
     padding: 30px;
 }
 
+/* Responsive adjustments */
 @media only screen and (max-width: 600px) {
     body {
         padding: 5px;
     }
     body>#content {
+        /* Using !important here, be mindful if further overrides are needed */
         padding: 0px 20px 20px 20px !important;
     }
 }
 
+/* Main content container styling */
 body>#content {
-    margin: 0px;
+    margin: 0px auto; /* Simplified margin */
     max-width: 900px;
     border: 1px solid #e1e4e8;
-    padding: 10px 40px;
-    padding-bottom: 20px;
+    padding: 10px 40px 20px 40px; /* Combined padding */
     border-radius: 2px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
+/* Details/Summary element styling */
 summary {
     cursor: pointer;
     text-decoration: underline;
 }
 
+/* Horizontal rule styling */
 hr {
-    color: #bbb;
     background-color: #bbb;
     height: 1px;
-    flex: 0 1 auto;
     margin: 1em 0;
     padding: 0;
     border: none;
 }
 
+/*
+ * NOTE: The .hljs-operator override was removed.
+ * It was likely a symptom of the color conflicts.
+ * If specific operator colors are still needed after fixing main conflicts,
+ * add specific overrides carefully based on the chosen theme.
+ */
+/*
 .hljs-operator {
     color: #868686;
-    /* There is a bug where the syntax highlighter would pick no color for e.g. `&&` symbols in the code samples. Let's overwrite this */
 }
-
+*/
 
 /**
  * Links
  */
-
 a {
     color: #0366d6;
     text-decoration: none;
 }
 
+/* :visited style same as a, can be combined if desired */
 a:visited {
     color: #0366d6;
 }
@@ -70,54 +80,61 @@ a:hover {
     text-decoration: underline;
 }
 
+/**
+ * Code blocks container (<pre>)
+ * IMPORTANT: background-color removed to allow Highlight.js dark themes
+ * to control the background. If you want a light background for code,
+ * remove this comment and use a LIGHT Highlight.js theme instead.
+ */
 pre {
-    background-color: #f6f8fa;
+    /* background-color: #f6f8fa; */ /* REMOVED for dark theme compatibility */
     border-radius: 3px;
-    font-size: 85%;
+    font-size: 85%; /* Makes text slightly smaller than surrounding text */
     line-height: 1.45;
-    overflow: auto;
+    overflow: auto; /* Adds scrollbars if code overflows */
     padding: 16px;
+    /* Optional: Add a subtle border if needed when background is controlled by theme */
+    /* border: 1px solid #333; */
 }
 
-
 /**
-  * Code blocks
-  */
-
+ * Inline code (not in <pre>)
+ */
 code {
-    background-color: rgba(27, 31, 35, .05);
+    background-color: rgba(27, 31, 35, .05); /* Subtle background for inline code */
     border-radius: 3px;
-    font-size: 85%;
+    font-size: 85%; /* Match pre's relative size */
     margin: 0;
-    word-wrap: break-word;
+    word-wrap: break-word; /* Allow inline code to wrap */
     padding: .2em .4em;
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
 }
 
-pre>code {
-    background-color: transparent;
+/**
+ * Code inside <pre> blocks - Resetting styles applied by the general 'code' rule
+ */
+pre > code {
+    background-color: transparent; /* Inherit background from pre (or theme) */
     border: 0;
-    display: inline;
-    line-height: inherit;
+    display: inline; /* Should technically be block or inline-block for layout consistency? Often okay as inline. */
+    font-size: 100%; /* Inherit font size from pre */
+    line-height: inherit; /* Inherit line height from pre */
     margin: 0;
     overflow: visible;
     padding: 0;
-    word-wrap: normal;
-    font-size: 100%;
+    word-wrap: normal; /* Prevent wrapping within the pre block unless intended */
 }
 
 
 /**
  * Blockquotes
  */
-
 blockquote {
     margin-left: 30px;
     margin-top: 0px;
     margin-bottom: 16px;
-    border-left-width: 3px;
     padding: 0 1em;
-    color: #828282;
+    color: #828282; /* Base color for blockquote text */
     border-left: 4px solid #e8e8e8;
     padding-left: 15px;
     font-size: 18px;
@@ -125,20 +142,20 @@ blockquote {
     font-style: italic;
 }
 
+/* Styles for elements *inside* blockquotes */
 blockquote * {
-    font-style: normal !important;
+    font-style: normal !important; /* Force non-italic */
     letter-spacing: 0;
-    color: #6a737d !important;
+    color: #6a737d !important; /* Override inherited color, using !important */
 }
 
 
 /**
  * Tables
  */
-
 table {
-    border-spacing: 2px;
-    display: block;
+    /* border-spacing: 2px; */ /* Usually overridden by border-collapse */
+    display: block; /* Needed for overflow */
     font-size: 14px;
     overflow: auto;
     width: 100%;
@@ -147,15 +164,13 @@ table {
     border-collapse: collapse;
 }
 
-td {
+td, th { /* Combined rule for td and th */
     padding: 6px 13px;
     border: 1px solid #dfe2e5;
 }
 
 th {
     font-weight: 600;
-    padding: 6px 13px;
-    border: 1px solid #dfe2e5;
 }
 
 tr {
@@ -164,57 +179,84 @@ tr {
 }
 
 table tr:nth-child(2n) {
-    background-color: #f6f8fa;
+    background-color: #f6f8fa; /* Zebra striping */
 }
 
 
 /**
- * Others
+ * Other elements
  */
-
 img {
     max-width: 100%;
+    height: auto; /* Maintain aspect ratio */
 }
 
 p {
-    line-height: 24px;
+    line-height: 1.5; /* Match body line-height */
     font-weight: 400;
     font-size: 16px;
-    color: #24292e;
+    color: #24292e; /* Specific paragraph color */
+    margin-top: 0; /* Default spacing handled by margin-bottom */
+    margin-bottom: 16px; /* Consistent bottom margin */
 }
 
-ul {
+ul, ol /* Added ol for ordered lists */ {
     margin-top: 0;
+    margin-bottom: 16px; /* Consistent bottom margin */
+    padding-left: 2em; /* Indentation for lists */
 }
 
 li {
-    color: #24292e;
+    color: #24292e; /* Specific list item color */
     font-size: 16px;
     font-weight: 400;
     line-height: 1.5;
 }
 
-li+li {
-    margin-top: 0.25em;
+li + li {
+    margin-top: 0.25em; /* Spacing between list items */
 }
 
+/*
+ * NOTE: Removed the universal '*' selector rule that was setting color: #24292e;
+ * It conflicted with syntax highlighting themes. Base colors are set on body or specific elements.
+ */
+/*
 * {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     color: #24292e;
 }
+*/
 
+/* Redundant :visited rule removed as it's same as a */
+/*
 a:visited {
     color: #0366d6;
 }
+*/
 
+/* Heading styles */
 h1,
 h2,
-h3 {
-    border-bottom: 1px solid #eaecef;
-    color: #111;
-    /* Darker */
+h3,
+h4, /* Added h4, h5, h6 for consistency */
+h5,
+h6 {
+    margin-top: 24px; /* Space above headings */
+    margin-bottom: 16px; /* Space below headings */
+    font-weight: 600; /* Bolder headings */
+    line-height: 1.25;
+    color: #111; /* Base heading color */
+    border-bottom: 1px solid #eaecef; /* Underline for h1-h3 */
+    padding-bottom: .3em; /* Space between text and underline */
 }
 
-code>* {
-    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+/* Remove border for lower-level headings */
+h4, h5, h6 {
+    border-bottom: none;
+}
+
+/* Font override for elements within highlighted code. Removed !important */
+code > * {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
