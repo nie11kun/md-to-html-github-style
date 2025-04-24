@@ -1,5 +1,5 @@
 
-# Markdown 到 HTML 转换器脚本 (Markdown to HTML Converter Script)
+# Markdown to HTML Converter
 
 这是一个简单的 Node.js 命令行脚本，用于将 Markdown 文件或包含 Markdown 文件的整个目录转换为独立的 HTML 文件。它使用 [Showdown](https://github.com/showdownjs/showdown) 进行 Markdown 解析，并集成 [Highlight.js](https://highlightjs.org/) 实现代码块的语法高亮。
 
