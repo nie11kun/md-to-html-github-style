@@ -30,7 +30,7 @@
 1.  **获取脚本:** 克隆此仓库或直接下载 `convert.js` (核心脚本), `md_html.cmd` (Windows 包装器) 以及默认的 `style.css` 文件。
     ```bash
     # 如果你使用的是 Git
-    # git clone [https://github.com/nie11kun/md-to-html-github-style.git](https://github.com/nie11kun/md-to-html-github-style.git)
+    # git clone https://github.com/nie11kun/md-to-html-github-style.git
     # cd md-to-html-github-style
 
     # 或者直接下载 convert.js, md_html.cmd 和 style.css 到你的项目目录
