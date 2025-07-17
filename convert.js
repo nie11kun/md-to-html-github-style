@@ -123,7 +123,7 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
 
         const postContent = `
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
   <script>
     mermaid.initialize({ startOnLoad: true });
   </script>
