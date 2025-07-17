@@ -8,8 +8,17 @@ const hljs = require('highlight.js'); // 用于代码高亮
 const yargs = require('yargs/yargs'); // 用于解析命令行参数
 const { hideBin } = require('yargs/helpers'); // yargs 的辅助函数
 
+// --- 新增：Showdown 扩展，用于修复空链接 ---
+// 这个扩展会在主解析器运行前，将 [text]() 替换为 [text](""), 确保其能被正确转换。
+showdown.extension('fixEmptyLinks', function () {
+  return [{
+    type: 'lang', // 'lang' 类型表示在 Markdown 文本上操作
+    regex: /\[(.*?)\]\(\)/g,
+    replace: '[$1]("")'
+  }];
+});
+
 // --- Showdown 代码高亮扩展 ---
-// (保持不变，同上一个版本)
 showdown.extension('highlight', function () {
   function htmlunencode(text) {
     return text
@@ -52,7 +61,6 @@ showdown.extension('highlight', function () {
 });
 
 // --- 核心转换逻辑 ---
-// (保持不变，同上一个版本)
 async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausibleDomain, styleData, highlightingStyles) {
     try {
         console.log(`⏳ 正在处理: ${inputFilePath}`);
@@ -62,7 +70,8 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
             ghCompatibleHeaderId: true,
             simpleLineBreaks: true,
             ghMentions: true,
-            extensions: ['highlight'],
+            // *** 问题修复：启用新增的 fixEmptyLinks 扩展 ***
+            extensions: ['fixEmptyLinks', 'highlight'],
             tables: true,
             strikethrough: true,
             tasklists: true,
@@ -99,11 +108,9 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
 
         const baseFilename = path.basename(inputFilePath, '.md');
         const outputFilename = `${baseFilename}.html`;
-        // *** 使用传入的 outputDir ***
         const outputFilePath = path.join(outputDir, outputFilename);
 
         await fs.writeFile(outputFilePath, finalHtml, 'utf8');
-        // *** 日志现在也依赖于传入的 outputDir ***
         console.log(`✅ 成功转换 ${path.basename(inputFilePath)} -> ${outputFilePath}`);
 
     } catch (error) {
@@ -115,21 +122,18 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
 async function run() {
     // --- 配置命令行参数解析器 (yargs) ---
     const argv = yargs(hideBin(process.argv))
-        .usage('使用方法: $0 -i <输入文件或目录> [-o <输出目录>] [选项]') // 更新使用说明
+        .usage('使用方法: $0 -i <输入文件或目录> [-o <输出目录>] [选项]')
         .option('input', {
             alias: 'i',
             describe: '输入的 Markdown 文件或包含 Markdown 文件的目录',
             type: 'string',
-            demandOption: true // 输入仍是必需的
+            demandOption: true
         })
-        .option('output', { // 定义 'output' 选项
+        .option('output', {
             alias: 'o',
-            // *** 更新描述，说明其可选性及默认行为 ***
             describe: '输出目录 (可选, 如果未提供，则输出到源文件所在目录)',
             type: 'string',
-            // *** 移除 demandOption: true 使其变为可选 ***
-            // demandOption: true,
-            default: null // 设置默认值为 null，方便后续检查
+            default: null
         })
         .option('title', {
             alias: 't',
@@ -184,29 +188,24 @@ async function run() {
     // --- 处理输入 (文件或目录) ---
     try {
         const inputStats = await fs.stat(inputPath);
-        let finalOutputDir; // 用于存储最终确定的输出目录
+        let finalOutputDir;
 
         // --- 确定并准备输出目录 ---
         if (argv.output) {
-            // 如果用户提供了 -o 参数
             finalOutputDir = path.resolve(process.cwd(), argv.output);
             console.log(`ℹ️ 指定输出目录: ${finalOutputDir}`);
             try {
-                // 创建指定的输出目录（如果不存在）
                 await fs.mkdir(finalOutputDir, { recursive: true });
             } catch (error) {
                 console.error(`❌ 致命错误: 无法创建指定的输出目录 ${finalOutputDir}:`, error.message);
                 process.exit(1);
             }
         } else {
-            // 如果用户没有提供 -o 参数
             console.log(`ℹ️ 未指定输出目录，将输出到源文件所在位置。`);
-            // 输出目录将在下面根据输入类型确定，这里不需要创建目录，因为源目录必然存在
         }
 
         if (inputStats.isDirectory()) {
             // --- 处理目录输入 ---
-            // 如果未指定 -o，则输出目录就是输入目录本身
             if (!argv.output) {
                 finalOutputDir = inputPath;
             }
@@ -222,7 +221,6 @@ async function run() {
 
             const processingPromises = markdownFiles.map(file => {
                 const fullInputPath = path.join(inputPath, file);
-                // 将最终确定的输出目录传递给转换函数
                 return convertMarkdownToHtml(fullInputPath, finalOutputDir, argv.title, argv.domain, styleData, highlightingStyles);
             });
             await Promise.all(processingPromises);
@@ -230,7 +228,6 @@ async function run() {
 
         } else if (inputStats.isFile()) {
             // --- 处理文件输入 ---
-            // 如果未指定 -o，则输出目录是输入文件的父目录
             if (!argv.output) {
                 finalOutputDir = path.dirname(inputPath);
             }
@@ -239,7 +236,6 @@ async function run() {
             if (!inputPath.toLowerCase().endsWith('.md')) {
                  console.warn(`⚠️ 警告: 输入文件 ${inputPath} 的扩展名不是 .md。`);
             }
-            // 将最终确定的输出目录传递给转换函数
             await convertMarkdownToHtml(inputPath, finalOutputDir, argv.title, argv.domain, styleData, highlightingStyles);
             console.log(`\n🎉 完成处理文件 ${inputPath}。输出已保存到 ${finalOutputDir}。`);
 
