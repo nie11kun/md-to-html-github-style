@@ -8,24 +8,43 @@ const hljs = require('highlight.js'); // 用于代码高亮
 const yargs = require('yargs/yargs'); // 用于解析命令行参数
 const { hideBin } = require('yargs/helpers'); // yargs 的辅助函数
 
-// --- 新增：Showdown 扩展，用于修复空链接 ---
-// 这个扩展会在主解析器运行前，将 [text]() 替换为 [text](""), 确保其能被正确转换。
+// --- 辅助函数：解码 HTML 实体 ---
+function htmlunencode(text) {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+// --- Showdown 扩展：修复空链接 ---
 showdown.extension('fixEmptyLinks', function () {
   return [{
-    type: 'lang', // 'lang' 类型表示在 Markdown 文本上操作
+    type: 'lang',
     regex: /\[(.*?)\]\(\)/g,
     replace: '[$1]("")'
   }];
 });
 
-// --- Showdown 代码高亮扩展 ---
+// --- 新增：Showdown 扩展，用于渲染 Mermaid 图表 ---
+showdown.extension('mermaid', function () {
+  return [{
+    type: 'output', // 在 HTML 输出后进行操作
+    filter: function (text, converter, options) {
+      // 查找被 showdown 转换后的 mermaid 代码块
+      const regex = /<pre><code\s+class="mermaid[^"]*">([\s\S]+?)<\/code><\/pre>/g;
+      // 将其替换为 mermaid.js 需要的 div 结构
+      return text.replace(regex, function (match, mermaidCode) {
+        // 解码，因为 showdown 会编码特殊字符
+        const decodedCode = htmlunencode(mermaidCode);
+        return `<div class="mermaid">${decodedCode}</div>`;
+      });
+    }
+  }];
+});
+
+
+// --- Showdown 扩展：代码高亮 ---
 showdown.extension('highlight', function () {
-  function htmlunencode(text) {
-    return text
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>');
-  }
   return [{
     type: 'output',
     filter: function (text, converter, options) {
@@ -33,6 +52,10 @@ showdown.extension('highlight', function () {
       const right = '</code></pre>';
       const flags = 'g';
       const replacement = function (wholeMatch, match, left, right) {
+        // 避开已经被 mermaid 扩展处理过的块
+        if (left.includes('class="mermaid')) {
+          return wholeMatch;
+        }
         const langMatch = left.match(/class="([^"\s]+)/);
         let lang = langMatch && langMatch[1] ? langMatch[1] : null;
         if (lang && lang.startsWith('language-')) {
@@ -70,8 +93,8 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
             ghCompatibleHeaderId: true,
             simpleLineBreaks: true,
             ghMentions: true,
-            // *** 问题修复：启用新增的 fixEmptyLinks 扩展 ***
-            extensions: ['fixEmptyLinks', 'highlight'],
+            // *** 启用所有扩展 ***
+            extensions: ['fixEmptyLinks', 'highlight', 'mermaid'],
             tables: true,
             strikethrough: true,
             tasklists: true,
@@ -100,6 +123,10 @@ async function convertMarkdownToHtml(inputFilePath, outputDir, pageTitle, plausi
 
         const postContent = `
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </body>
 </html>`;
 

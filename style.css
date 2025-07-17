@@ -260,3 +260,8 @@ h4, h5, h6 {
 code > * {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
+
+.mermaid {
+    display: flex;       /* 使用 Flexbox 布局 */
+    justify-content: center; /* 水平居中子元素 */
+}
