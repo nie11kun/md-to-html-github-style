@@ -155,7 +155,6 @@ blockquote * {
  */
 table {
     /* border-spacing: 2px; */ /* Usually overridden by border-collapse */
-    display: block; /* Needed for overflow */
     font-size: 14px;
     overflow: auto;
     width: 100%;
@@ -187,8 +186,11 @@ table tr:nth-child(2n) {
  * Other elements
  */
 img {
-    max-width: 100%;
-    height: auto; /* Maintain aspect ratio */
+    width: 100%;      /* 设置宽度为容器的100% */
+    height: auto;     /* 高度自动缩放，防止图片变形 */
+    display: block;   /* 确保图片是块级元素，避免下方出现多余空隙 */
+    margin-top: 1em;    /* 与上方内容保持一些间距 */
+    margin-bottom: 1em; /* 与下方内容保持一些间距 */
 }
 
 p {
