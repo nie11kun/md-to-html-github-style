@@ -185,12 +185,24 @@ table tr:nth-child(2n) {
 /**
  * Other elements
  */
+/* --- 图片样式 --- */
+/* 1. 图片默认样式：保持原始尺寸，但最大不超过容器宽度 */
 img {
-    width: 100%;      /* 设置宽度为容器的100% */
-    height: auto;     /* 高度自动缩放，防止图片变形 */
-    display: block;   /* 确保图片是块级元素，避免下方出现多余空隙 */
-    margin-top: 1em;    /* 与上方内容保持一些间距 */
-    margin-bottom: 1em; /* 与下方内容保持一些间距 */
+    max-width: 100%;   /* 核心规则：最大宽度为100% */
+    height: auto;      /* 高度自动缩放，保持比例 */
+    display: block;    /* 作为块级元素，方便设置边距 */
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* 2. 辅助类：强制图片占满宽度 */
+.img-full-width {
+    width: 100%;
+}
+
+/* 3. 辅助类：用于居中图片的容器 */
+.center {
+    text-align: center; /* 让容器内的图片等块级元素居中 */
 }
 
 p {
