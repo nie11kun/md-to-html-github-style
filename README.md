@@ -35,7 +35,7 @@
 
 - `convert.js`: 核心转换脚本，包含所有处理逻辑。
 - `style.css`: 用于美化输出 HTML 的默认层叠样式表。
-- [cite_start]`md_html.cmd`: 一个便捷的 Windows 批处理脚本，用于从命令行运行转换器。 [cite: 1]
+- `md_html.cmd`: 一个便捷的 Windows 批处理脚本，用于从命令行运行转换器。
 - `node_modules/`: 存放已安装的 Node.js 依赖项。
 
 ## 使用方法
@@ -69,7 +69,7 @@ node convert.js -i "path/to/markdown_folder/"
 
 #### 使用 Windows 批处理文件
 
-[cite_start]`md_html.cmd` 会将所有参数直接传递给 Node.js 脚本 [cite: 1]。
+`md_html.cmd` 会将所有参数直接传递给 Node.js 脚本。
 
 ```cmd
 md_html.cmd -i "my_doc.md"
